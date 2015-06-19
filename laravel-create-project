@@ -1,0 +1,64 @@
+#!/bin/bash
+
+path=''
+project_name=''
+base_dir=''
+base_laravel=''
+base_resource=''
+project_dir='project'
+resource_dir='resources'
+current_dir=`pwd`
+
+if [[ ! -z $1 ]] ; then
+	project_name=$1
+else
+	project_name='default-project'
+fi
+
+
+if [[ ! -z $2 ]] ; then
+	path=$2
+else
+	path=`pwd`
+fi
+
+#base dirs
+base_dir="$path/$project_name"
+base_project="$base_dir/$project_dir"
+base_laravel="$base_dir/laravel"
+base_resource="$base_dir/$resource_dir"
+
+mkdir -p "$base_project"
+
+echo 'Fetch resources'
+git clone git@github.com:neuberdesigns/laravel-skeleton.git $base_resource
+
+echo 'Installing Laravel'
+cd $base_dir
+#intall laravel
+composer create-project laravel/laravel laravel 4.1.*
+
+cd $current_dir
+
+cp "$base_resource/project/model.mwb" "$base_project/schema-$project_name.mwb"
+cp -r "$base_resource/app" "$base_resource/bootstrap" "$base_resource/public" -t $base_laravel
+cp "$base_resource/composer.json" "$base_laravel/"
+cp "$base_resource/gitignore-root" "$base_dir/.gitignore"
+
+echo "777 Storage permision"
+chmod -R 777 "$base_laravel/app/storage/"
+
+echo "777 Uploads permision"
+chmod -R 777 "$base_laravel/public/uploads/"
+
+echo "777 Cache permision"
+chmod -R 777 "$base_laravel/public/cache"
+
+#laravel autload
+cd $base_laravel
+echo 'Update Auto Load'
+composer dump-autoload
+
+rm -rf $base_resource
+#done
+echo 'project ready!'
