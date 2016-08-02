@@ -1,23 +1,41 @@
 #!/bin/bash
 
 path=''
-project_name=''
 base_dir=''
 base_laravel=''
 base_resource=''
+project_name='myproject'
 project_dir='project'
 resource_dir='resources'
 current_dir=`pwd`
+fetchdev=false
+params=()
+i=0
 
-if [[ ! -z $1 ]] ; then
-	project_name=$1
-else
-	project_name='default-project'
+for arg in $@ ; do
+	params[i]=$arg
+	((i++))
+done
+
+i=0
+for arg in ${params[*]} ; do
+	case $arg in
+		"-d" | "--dev" ) 
+			fetchdev=true
+			unset params[$i]
+		;;
+		* ) 
+	esac
+	((i++))
+done
+
+if [[ ! -z ${params[0]} ]] ; then
+	project_name=${params[0]}
 fi
 
 
-if [[ ! -z $2 ]] ; then
-	path=$2
+if [[ ! -z ${params[1]} ]] ; then
+	path=${params[1]}
 else
 	path=`pwd`
 fi
@@ -31,7 +49,13 @@ base_resource="$base_dir/$resource_dir"
 mkdir -p "$base_project"
 
 echo 'Fetch resources'
-git clone git@github.com:neuberdesigns/laravel-skeleton.git $base_resource
+if $fetchdev ; then
+	echo 'from DEV'
+	git clone -b dev git@github.com:neuberoliveira/laravel-skeleton.git $base_resource
+else
+	echo 'from MASTER'
+	git clone git@github.com:neuberoliveira/laravel-skeleton.git $base_resource
+fi
 
 echo 'Installing Laravel'
 cd $base_dir
