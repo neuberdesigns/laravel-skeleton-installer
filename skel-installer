@@ -75,6 +75,9 @@ chmod -R 777 "$base_laravel/app/storage/"
 echo "777 Uploads permision"
 chmod -R 777 "$base_laravel/public/uploads/"
 
+echo "Create Cachedir"
+mkdir -p "$base_laravel/public/cache"
+
 echo "777 Cache permision"
 chmod -R 777 "$base_laravel/public/cache"
 
