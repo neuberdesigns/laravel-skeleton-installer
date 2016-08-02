@@ -24,3 +24,5 @@ In a terminal window cd to where you cloned the repo `cd `
 Run this command `mkdir -p ~/bin && cp skel-installer ~/bin/`
 
 Add the bin folder to your path, this is platform specific so you need to search how to do this in the latform you use.
+
+
